@@ -1,3 +1,3 @@
 var sourcesIndex = {};
-sourcesIndex["finance"] = {"name":"","files":["main.rs"]};
+sourcesIndex["finance"] = {"name":"","files":["lib.rs"]};
 createSourceSidebar();

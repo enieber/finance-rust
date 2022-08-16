@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["main",""],["read_file","Read file as string"]],"type":[["TError",""],["TResult",""]]});
+window.SIDEBAR_ITEMS = {"fn":[["read_file_line_by_line","Read file as string"]]};
