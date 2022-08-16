@@ -32,11 +32,14 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
-</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std</span>::{
-	  <span class="ident">fs</span>::{<span class="ident">File</span>},
-    <span class="ident">io</span>::{<span class="ident">BufReader</span>, <span class="ident">BufRead</span>}
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::result::Result</span>::{<span class="prelude-val">Err</span>, <span class="prelude-val">Ok</span>};
+<span class="kw">use</span> <span class="ident">std</span>::{
+    <span class="ident">fs::File</span>,
+    <span class="ident">io</span>::{<span class="ident">BufRead</span>, <span class="ident">BufReader</span>},
 };
-<span class="kw">use</span>  <span class="ident">std::result::Result</span>::{<span class="prelude-val">Err</span>, <span class="prelude-val">Ok</span>};
 
 <span class="doccomment">/// # Read file as string</span>
 <span class="doccomment">/// receive p in string and need implemenetation</span>
@@ -52,8 +55,11 @@
                 <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">1</span>];
                 <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">2</span>];
                 <span class="kw">let</span> <span class="ident">description</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">3</span>];
-                <span class="macro">println!</span>(<span class="string">&quot;{} in {} has valued: {}, with {}&quot;</span>, <span class="ident">id</span>, <span class="ident">date</span>, <span class="ident">value</span>, <span class="ident">description</span>);
-            },
+                <span class="macro">println!</span>(
+                    <span class="string">&quot;{} in {} has valued: {}, with {}&quot;</span>,
+                    <span class="ident">id</span>, <span class="ident">date</span>, <span class="ident">value</span>, <span class="ident">description</span>
+                );
+            }
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Deu ruim&quot;</span>),
         }
     }
