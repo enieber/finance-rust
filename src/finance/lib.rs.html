@@ -34,7 +34,6 @@
 <span id="28">28</span>
 <span id="29">29</span>
 <span id="30">30</span>
-<span id="31">31</span>
 </pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::result::Result</span>::{<span class="prelude-val">Err</span>, <span class="prelude-val">Ok</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{
     <span class="ident">fs::File</span>,
@@ -42,29 +41,28 @@
 };
 
 <span class="doccomment">/// # Read file as string</span>
-<span class="doccomment">/// receive p in string and need implemenetation</span>
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_file_line_by_line</span>(<span class="ident">filepath</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">std::error::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="doccomment">/// receive path csv file in string and parse and print text with data parsed from file</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">read_file_line_by_line</span>(<span class="ident">filepath</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="ident">Box</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">std::error::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">file</span> <span class="op">=</span> <span class="ident">File::open</span>(<span class="ident">filepath</span>)<span class="question-mark">?</span>;
     <span class="kw">let</span> <span class="ident">reader</span> <span class="op">=</span> <span class="ident">BufReader::new</span>(<span class="ident">file</span>);
 
+    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">total_value</span> <span class="op">=</span> <span class="number">0.0</span>;
+
     <span class="kw">for</span> <span class="ident">line</span> <span class="kw">in</span> <span class="ident">reader</span>.<span class="ident">lines</span>() {
         <span class="kw">match</span> <span class="ident">line</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">strLine</span>) =&gt; {
-                <span class="kw">let</span> <span class="ident">arrItems</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">strLine</span>.<span class="ident">split</span>(<span class="string">&quot;,&quot;</span>).<span class="ident">collect</span>();
-                <span class="kw">let</span> <span class="ident">date</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">0</span>];
-                <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">1</span>];
-                <span class="kw">let</span> <span class="ident">id</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">2</span>];
-                <span class="kw">let</span> <span class="ident">description</span> <span class="op">=</span> <span class="ident">arrItems</span>[<span class="number">3</span>];
-                <span class="macro">println!</span>(
-                    <span class="string">&quot;{} in {} has valued: {}, with {}&quot;</span>,
-                    <span class="ident">id</span>, <span class="ident">date</span>, <span class="ident">value</span>, <span class="ident">description</span>
-                );
+            <span class="prelude-val">Ok</span>(<span class="ident">str_line</span>) =&gt; {
+                <span class="kw">let</span> <span class="ident">arr_items</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">str_line</span>.<span class="ident">split</span>(<span class="string">&quot;,&quot;</span>).<span class="ident">collect</span>();
+                <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="ident">arr_items</span>[<span class="number">1</span>];
+                <span class="kw">let</span> <span class="ident">result_value</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">f32</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">value</span>.<span class="ident">parse</span>();
+                <span class="kw">match</span> <span class="ident">result_value</span> {
+                    <span class="prelude-val">Ok</span>(<span class="ident">value_number</span>) =&gt; <span class="ident">total_value</span> <span class="op">+</span><span class="op">=</span> <span class="ident">value_number</span>,
+                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {}
+                }
             }
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="macro">println!</span>(<span class="string">&quot;Deu ruim&quot;</span>),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {}
         }
     }
-
-    <span class="prelude-val">Ok</span>(())
+    <span class="prelude-val">Ok</span>(<span class="ident">total_value</span>)
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="finance" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.63.0 (4b91a6ea7 2022-08-08)" ></div>
