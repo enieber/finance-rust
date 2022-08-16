@@ -5,7 +5,7 @@ use std::{
 };
 
 /// # Read file as string
-/// receive p in string and need implemenetation
+/// receive path csv file in string and parse and print text with data parsed from file
 pub fn read_file_line_by_line(filepath: &str) -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open(filepath)?;
     let reader = BufReader::new(file);
