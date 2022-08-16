@@ -1,8 +1,8 @@
+use std::result::Result::{Err, Ok};
 use std::{
-	  fs::{File},
-    io::{BufReader, BufRead}
+    fs::File,
+    io::{BufRead, BufReader},
 };
-use  std::result::Result::{Err, Ok};
 
 /// # Read file as string
 /// receive p in string and need implemenetation
@@ -18,8 +18,11 @@ pub fn read_file_line_by_line(filepath: &str) -> Result<(), Box<dyn std::error::
                 let value = arrItems[1];
                 let id = arrItems[2];
                 let description = arrItems[3];
-                println!("{} in {} has valued: {}, with {}", id, date, value, description);
-            },
+                println!(
+                    "{} in {} has valued: {}, with {}",
+                    id, date, value, description
+                );
+            }
             Err(_) => println!("Deu ruim"),
         }
     }
