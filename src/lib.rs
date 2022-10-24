@@ -1,48 +1,79 @@
-use std::result::Result::{Err, Ok};
-use std::{
-    fs::File,
-    io::{BufRead, BufReader},
-};
-use std::io::prelude::*;
+use std::fs::{File, OpenOptions};
+use std::io::{BufRead, BufReader, Error, Lines, Write};
+use std::path::Path;
 
-/// # Read file as string
-/// receive path csv file in string and parse and calculate valus
-pub fn read_file_and_sum_total(filepath: &str) -> Result<f32, Box<dyn std::error::Error>> {
-    let file = File::open(filepath)?;
-    let reader = BufReader::new(file);
-
-    let mut total_value = 0.0;
-    
-    for line in reader.lines() {
-        total_value += sum_total_by_line(line);
+pub fn read_file_to_line(file_path: &str) -> Result<Lines<BufReader<File>>, String> {
+    let file = File::open(file_path);
+    match file {
+        Ok(file_open) => {
+            let file_buffer = BufReader::new(file_open);
+            return Ok(file_buffer.lines());
+        }
+        Err(err) => {
+            return Err(format!("Error to read file: {}", err));
+        }
     }
-    Ok(total_value)
 }
 
+fn create_file_or_open(file_path: &str) -> Result<File, Error> {
+    if Path::new(file_path).exists() {
+        let file = OpenOptions::new().write(true).append(true).open(file_path);
+        return file;
+    } else {
+        let file = File::create(file_path);
+        return file;
+    }
+}
 
-/// ## sum_total_by_line function sum item value in position 1
-/// example: date, value, id, description
-fn sum_total_by_line(line: Result<String, std::io::Error>) -> f32 {
-    let mut total_value = 0.0;
-    match line {
-            Ok(str_line) => {
-                let arr_items: Vec<&str> = str_line.split(",").collect();
-                let value = arr_items[1];
-                let result_value: Result<f32, _> = value.parse();
-                match result_value {
-                    Ok(value_number) => total_value += value_number,
-                    Err(_) => {}
+pub fn write_line(file_path: &str, line: &str) -> Result<String, String> {
+    let file = create_file_or_open(file_path);
+
+    match file {
+        Ok(mut file_buffer) => {
+            let has_write = writeln!(file_buffer, "{}", &line);
+            match has_write {
+                Ok(_ok) => {
+                    return Ok(format!("Line write with success"));
+                }
+                Err(err) => {
+                    return Err(format!("Error to write file: {}", err));
                 }
             }
-            Err(_) => {}
         }
-    total_value
+        Err(err) => {
+            return Err(format!("Error to open file: {}", err));
+        }
+    }
 }
 
-pub fn writter_file_sum(path_file: &str, sum: &str) -> Result<(),  Box<dyn std::error::Error>> {
-    let mut file_buffer = File::create(&path_file)?;
-    write!(file_buffer, "total sum\n");
-    write!(file_buffer, "{}\n", &sum);
-    Ok(())
+pub struct Data {
+    date: String,
+    value: String,
+    id: String,
+    description: String,
 }
 
+impl ToString for Data {
+    fn to_string(&self) -> String {
+        return format!(
+            "The {} has value {} in {} with description: {}",
+            &self.id, &self.value, &self.date, &self.description
+        );
+    }
+}
+
+fn convert_to_data(value_data: Vec<&str>) -> Data {
+    let data = Data {
+        date: value_data[0].to_string(),
+        value: value_data[1].to_string(),
+        id: value_data[2].to_string(),
+        description: value_data[3].to_string(),
+    };
+    return data;
+}
+
+pub fn split_line(line: &str) -> Data {
+    let value_data: Vec<&str> = line.split(",").collect();
+    let data = convert_to_data(value_data);
+    return data;
+}
