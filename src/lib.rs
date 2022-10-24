@@ -1,3 +1,5 @@
+pub mod model;
+use crate::model::{convert_to_data, Data, split_pattern_file};
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, BufReader, Error, Lines, Write};
 use std::path::Path;
@@ -46,34 +48,9 @@ pub fn write_line(file_path: &str, line: &str) -> Result<String, String> {
     }
 }
 
-pub struct Data {
-    date: String,
-    value: String,
-    id: String,
-    description: String,
-}
-
-impl ToString for Data {
-    fn to_string(&self) -> String {
-        return format!(
-            "The {} has value {} in {} with description: {}",
-            &self.id, &self.value, &self.date, &self.description
-        );
-    }
-}
-
-fn convert_to_data(value_data: Vec<&str>) -> Data {
-    let data = Data {
-        date: value_data[0].to_string(),
-        value: value_data[1].to_string(),
-        id: value_data[2].to_string(),
-        description: value_data[3].to_string(),
-    };
-    return data;
-}
-
 pub fn split_line(line: &str) -> Data {
-    let value_data: Vec<&str> = line.split(",").collect();
+    let pattern = split_pattern_file();
+    let value_data: Vec<&str> = line.split(&pattern).collect();
     let data = convert_to_data(value_data);
     return data;
 }
